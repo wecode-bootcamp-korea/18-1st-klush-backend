@@ -36,7 +36,7 @@ class Product(models.Model):
     is_vegan       = models.BooleanField(default=False)
     is_new         = models.BooleanField(default=False)  
     is_soldout     = models.BooleanField(default=False)  
-    sub_categories = models.ForeignKey('SubCategory', on_delete=models.CASCADE)
+    sub_category   = models.ForeignKey('SubCategory', on_delete=models.CASCADE)
     label          = models.ManyToManyField('Label', through='ProductLabel')
 
     class Meta:
@@ -68,7 +68,7 @@ class ProductLabel(models.Model):
         db_table='products_labels'
 
 class Review(models.Model):
-    star_rating = models.IntegerField()
+    rating      = models.IntegerField()
     content     = models.TextField(max_length=3000)
     product     = models.ForeignKey('product.Product', on_delete=models.CASCADE)
     user        = models.ForeignKey('user.User', on_delete=models.CASCADE)
