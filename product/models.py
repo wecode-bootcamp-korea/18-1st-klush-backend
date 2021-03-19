@@ -55,8 +55,7 @@ class Like(models.Model):
 
 class Label(models.Model):
     name    = models.CharField(max_length=50)
-    product = models.ManyToManyField('Product', through='ProductLabel')
-
+    
     class Meta:
         db_table ='labels'
 
