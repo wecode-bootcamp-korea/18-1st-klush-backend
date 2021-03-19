@@ -1,5 +1,7 @@
 from django.urls import path
 
-urlpatterns = [
+from .views import SignInView
 
+urlpatterns = [
+    path('/signin', SignInView.as_view())
 ]
