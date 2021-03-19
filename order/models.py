@@ -6,7 +6,7 @@ from product.models import Product
 class Order(models.Model):
     order_number = models.IntegerField()
     created_at   = models.DateTimeField(auto_now_add=True)
-    updated_at   = models.DateTimeField(auto_add=True)
+    updated_at   = models.DateTimeField(auto_now=True)
     payment      = models.OneToOneField('Payment', on_delete=models.CASCADE, null=True)
     user         = models.ForeignKey('user.User', on_delete=models.CASCADE)
     address      = models.ForeignKey('Address', on_delete=models.CASCADE, null=True)

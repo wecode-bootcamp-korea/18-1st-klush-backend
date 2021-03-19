@@ -61,8 +61,8 @@ class Label(models.Model):
         db_table ='labels'
 
 class ProductLabel(models.Model):
-    product = models.Foriegnkey('Product', on_delete=models.CASCADE)
-    label   = models.ForiegnKey('Label',on_delete=models.CASCADE)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    label   = models.ForeignKey('Label', on_delete=models.CASCADE)
 
     class Meta:
         db_table='products_labels'
@@ -75,3 +75,4 @@ class Review(models.Model):
 
     class Meta:
         db_table = 'reviews'
+        
