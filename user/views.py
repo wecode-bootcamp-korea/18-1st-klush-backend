@@ -1,4 +1,5 @@
-import json, re
+import json
+import re
 import bcrypt
 import jwt
 
@@ -6,8 +7,8 @@ from django.http      import JsonResponse
 from django.views     import View
 from django.db.models import Q
 
-from .models     import User
-from my_settings import SECRET_KEY, ALGORITHM
+from .models          import User
+from my_settings      import SECRET_KEY, ALGORITHM
 
 class SignInView(View):
     def post(self,request):
