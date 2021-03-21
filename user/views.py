@@ -1,4 +1,5 @@
-import json, re
+import json
+import re
 import bcrypt
 import jwt
 
@@ -6,8 +7,8 @@ from django.http      import JsonResponse
 from django.views     import View
 from django.db.models import Q
 
-from .models     import User
-from my_settings import SECRET_KEY, ALGORITHM
+from .models          import User
+from my_settings      import SECRET_KEY, ALGORITHM
 
 class SignUpView(View):
     def post(self,request):
@@ -20,7 +21,7 @@ class SignUpView(View):
             nickname     = data.get('nickname', None)
 
             if User.objects.filter(Q(email=email) | Q(name=name) | Q(phone_number=phone_number)).exists():
-                return JsonResponse({'message':' 이미 가입되어 있습니다.'}, status=400)
+                return JsonResponse({'message':'DUPLICATED_INFORMATION'}, status=400)
 
             regex_email    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
             regex_password = '^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{10,25}'
@@ -28,23 +29,29 @@ class SignUpView(View):
             regex_phone    = '^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$'
 
             if not re.match(regex_email,email):
-                return JsonResponse({'message':'잘못된 형식입니다. 이메일을 다시 한번 확인해 주세요'}, status=400)
+                return JsonResponse({'message':'INVALID_EMAIL'}, status=400)
 
             if not re.match(regex_password,password):
-                return JsonResponse({'message':'비밀번호는 10자리 이상, 영문과 숫자, 특수문자를 모두 입력해주세요.'})
-
-            password         = data['password'].encode('utf-8')
-            password_crypt   = bcrypt.hashpw(password, bcrypt.gensalt())
-            decoded_password = password_crypt.decode('utf-8')
+                return JsonResponse({'message':'INVALID_PASSWORD'}, statur=400)
 
             if not re.match(regex_name,name):
-                return JsonResponse({'message':'이름을 다시 한번 확인해 주세요'}, status=400)
+                return JsonResponse({'message':'INVALID_NAME'}, status=400)
 
             if not re.match(regex_phone,phone_number):
-                return JsonResponse({'message':'핸드폰번호를 다시 한번 확인해주세요'}, status=400)
+                return JsonResponse({'message':'INVALID_PHONENUMBER'}, status=400)
 
-            User.objects.create(email=email, password=decoded_password, name=name, phone_number=phone_number, nickname=nickname)
-            return JsonResponse({'message':'회원가입 되었습니다.'}, status=201)
+            encoded_password  = data['password'].encode('utf-8')
+            bycrpted_password = bcrypt.hashpw(encoded_password, bcrypt.gensalt())
+            decoded_password  = bycrpted_password.decode('utf-8')
+            
+            User.objects.create(
+                email=email,
+                password=decoded_password,
+                name=name,
+                phone_number=phone_number,
+                nickname=nickname
+                )
+            return JsonResponse({'message':'SUCCESS'}, status=201)
 
         except json.JSONDecodeError:
             return JsonResponse({"message": "JSONDECODE_ERROR"}, status=400)
