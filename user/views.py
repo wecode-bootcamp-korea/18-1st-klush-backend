@@ -20,8 +20,7 @@ class SignInView(View):
             if not User.objects.filter(email=email).exists():
                 return JsonResponse({'message':'INVALID_USER'}, status=401)
             
-            user = User.objects.get(email=email)
-
+            user           = User.objects.get(email=email)
             regex_email    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
             regex_password = '^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{10,25}'
 

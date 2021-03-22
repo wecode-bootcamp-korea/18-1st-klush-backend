@@ -11,9 +11,13 @@ def authorization (func):
         try:
             token         = request.headers['Authorization']
             decoded_token = jwt.decode(token, SECRET_KEY, ALGORITHM)
+
+            if not User.objects.filter(id=decoded_token["user_id"]).exists():
+                return JsonResponse({'message': 'INVALID_TOKEN'}, status=401)
+
             request.user  = User.objects.get(id=decoded_token["user_id"])
             return func(self, request, *args, **kwargs)
             
         except jwt.DecodeError:
-            return JsonResponse({'message': 'Not exact token'}, status=401)
+            return JsonResponse({'message': 'INVALID_TOKEN'}, status=401)
     return wrapper
