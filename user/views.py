@@ -16,10 +16,11 @@ class SignInView(View):
             data     = json.loads(request.body)
             email    = data.get('email')
             password = data['password']
-            user     = User.objects.filter(email=email)
 
-            if not user:
+            if not User.objects.filter(email=email).exists():
                 return JsonResponse({'message':'INVALID_USER'}, status=401)
+            
+            user = User.objects.get(email=email)
 
             regex_email    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
             regex_password = '^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{10,25}'
@@ -30,8 +31,6 @@ class SignInView(View):
             if not re.match(regex_password,password):
                 return JsonResponse({'message':'INVALID_PASSWORD'},status=401)
 
-            user = User.objects.get(email=email)    
-
             if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
                 return JsonResponse({'message':'INVALID_USER'}, status=401)
 
@@ -40,9 +39,6 @@ class SignInView(View):
 
         except json.JSONDecodeError:
             return JsonResponse({'message': 'JSONDECODE_ERROR'}, status=400)
-
-        except User.MultipleObjectsReturned:
-            return JsonResponse({'message':'INVALID_USER'}, status=401)
 
         except KeyError:
             return JsonResponse({'message':'KEY_ERROR'}, status=400)
