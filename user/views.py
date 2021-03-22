@@ -16,6 +16,7 @@ class SignInView(View):
             data     = json.loads(request.body)
             email    = data.get('email')
             password = data['password']
+            user     = User.objects.filter(email=email)
 
             regex_email    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
             regex_password = '^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{10,25}'
@@ -26,7 +27,7 @@ class SignInView(View):
             if not re.match(regex_password,password):
                 return JsonResponse({'message':'INVALID_PASSWORD'},status=401)
 
-            if not User.objects.filter(email=email).exist():
+            if not user.exist():
                 return JsonResponse({'message':'INVALID_USER'}, status=401)
 
             if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
