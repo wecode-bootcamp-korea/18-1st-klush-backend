@@ -32,7 +32,7 @@ class SignUpView(View):
                 return JsonResponse({'message':'INVALID_EMAIL'}, status=400)
 
             if not re.match(regex_password,password):
-                return JsonResponse({'message':'INVALID_PASSWORD'}, statur=400)
+                return JsonResponse({'message':'INVALID_PASSWORD'}, status=400)
 
             if not re.match(regex_name,name):
                 return JsonResponse({'message':'INVALID_NAME'}, status=400)
