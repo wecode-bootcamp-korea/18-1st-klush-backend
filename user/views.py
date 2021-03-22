@@ -18,6 +18,9 @@ class SignInView(View):
             password = data['password']
             user     = User.objects.filter(email=email)
 
+            if not user:
+                return JsonResponse({'message':'INVALID_USER'}, status=401)
+
             regex_email    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
             regex_password = '^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{10,25}'
 
@@ -27,14 +30,13 @@ class SignInView(View):
             if not re.match(regex_password,password):
                 return JsonResponse({'message':'INVALID_PASSWORD'},status=401)
 
-            if not user.exist():
-                return JsonResponse({'message':'INVALID_USER'}, status=401)
+            user = User.objects.get(email=email)    
 
             if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
                 return JsonResponse({'message':'INVALID_USER'}, status=401)
 
             access_token = jwt.encode({'user_id': user.id}, SECRET_KEY, ALGORITHM)
-            return JsonResponse({'token': access_token, 'name': user.name, 'message':'SUCCESS'}, status=200)
+            return JsonResponse({'token': access_token, 'message':'SUCCESS'}, status=200)
 
         except json.JSONDecodeError:
             return JsonResponse({'message': 'JSONDECODE_ERROR'}, status=400)
