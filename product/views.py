@@ -3,12 +3,7 @@ import json
 from django.http        import JsonResponse
 
 from django.views       import View
-from product.models     import (
-    Product,
-    Image,
-    Label,
-    ProductLabel
-)
+from product.models     import Product, Image
 
 class ProductListView(View):
     def get(self, request):
