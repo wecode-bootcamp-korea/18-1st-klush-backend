@@ -1,5 +1,7 @@
 from django.urls import path
 
-urlpatterns = [
+from .views import MainView
 
+urlpatterns = [
+    path('/main',MainView.as_view())
 ]
