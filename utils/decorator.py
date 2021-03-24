@@ -7,7 +7,7 @@ from user.models import User
 from my_settings import SECRET_KEY, ALGORITHM
 
 def authorization (func):
-    def wrapper (self, request, *args, **kwrgs):
+    def wrapper (self, request, *args, **kwargs):
         try:
             token         = request.headers['Authorization']
             decoded_token = jwt.decode(token, SECRET_KEY, ALGORITHM)
