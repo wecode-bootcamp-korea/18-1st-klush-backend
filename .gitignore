@@ -431,4 +431,10 @@ zsdoc/data
 # End of https://www.toptal.com/developers/gitignore/api/django,python,pycharm,vscode,vim,macos,linux,zsh
 
 *.csv
+klush.numbers
+ProductLabel.numbers
 my_settings.py
+Labelsheet-Label Table.csv
+ProductLabel.csv
+Productsheet-Product Table.csv
+DB_upload.py
