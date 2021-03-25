@@ -23,7 +23,7 @@ class CartView(View):
                 order=Order.objects.create(
                     order_number = uuid.uuid4(),
                     user         = user,
-                    order_status = order_status,
+                    order_status = OrderStatus.objects.get(status=ORDER_STATUS),
                 )
                 OrderProduct.objects.create(
                     total_quantity = quantity,
