@@ -5,6 +5,16 @@ from django.views   import View
 
 from product.models import SubCategory, Product
 
+class SubCategoryView(View):
+    def get(self, request):
+        sub_categories    = SubCategory.objects.all()
+
+        sub_category_list = [{
+            'sub_category'    : sub_category.id,
+            'name'            : sub_category.name,
+        } for sub_category in sub_categories]
+        return JsonResponse({'sub_category_list_data' : sub_category_list}, status = 200)
+
 class ProductListView(View):
     def get(self, request):
         products = Product.objects.all()
@@ -18,11 +28,9 @@ class ProductListView(View):
 
         if is_new:
             products = products.filter(is_new=is_new)
-        if sort == 'desc':
-            products = products.order_by('-price')
 
-        if sort == 'asc':
-            products = products.order_by('price')            
+        if sort:
+            products = products.order_by(sort)      
             
         product_list = [{
             'product_id'    : product.id,
@@ -43,6 +51,7 @@ class ProductDetailView(View):
             return JsonResponse({'message' : 'DOES_NOT_EXIST'}, status = 401)
 
         product        = Product.objects.get(id = product_id)
+
         product_detail = [{
             'sub_category'  : product.sub_category.name,
             'product_id'    : product.id,
