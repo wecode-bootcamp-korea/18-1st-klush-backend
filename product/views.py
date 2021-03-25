@@ -7,34 +7,25 @@ from product.models import SubCategory, Product
 
 class ProductListView(View):
     def get(self, request):
-        
+
         products = Product.objects.all()
 
-        # 섭카테고리 쿼리로 필터
-        if  request.GET.get('sub_category'):
-            sub_category_id = request.GET.get('sub_category')
+        is_new = request.GET.get('is_new', None)
+        sub_category_id = request.GET.get('sub_category', None)
+        sort = request.GET.get('sort', None)
 
-            sub_categories  = SubCategory.objects.filter(id=sub_category_id)
+        if sub_category_id:
+            products = products.filter(sub_category_id=sub_category_id)
 
-            sub_category_list = [{
-                'sub_category': sub_category.id,
-                'name'        : sub_category.name,
-            } for sub_category in sub_categories]
+        if is_new:
+            products = products.filter(is_new=is_new)
+        
+        if sort == 'desc':
+            products = products.order_by('-price')
 
-            return JsonResponse({'sub_category_list_data': sub_category_list}, status=200)
-
-        # is_new 인것 쿼리로 필터 : 메인페이지용
-        if request.GET.get('is_new'):
-            products = Product.objects.filter(is_new=True)
-            main_product_list=[{
-                'image_url'     : [img.image_url for img in product.image_set.all()],
-                "name"          : product.name,
-                'product_labels': [label.label.name for label in product.productlabel_set.all()],
-                'price'         : product.price
-            } for product in products]
-            return JsonResponse({'new_product_list': main_product_list}, status=200)
-
-        # 디폴트 상품 리스트뷰
+        if sort == 'asc':
+            products = products.order_by('price')            
+            
         product_list = [{
             'product_id'    : product.id,
             'sub_category'  : product.sub_category.name,
@@ -46,6 +37,7 @@ class ProductListView(View):
             'is_soldout'    : product.is_soldout,
             'product_labels': [label.label.name for label in product.productlabel_set.all()],
         } for product in products]
+
         return JsonResponse({'product_list_data': product_list}, status=200)
 
 class ProductDetailView(View):
