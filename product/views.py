@@ -7,19 +7,17 @@ from product.models import SubCategory, Product
 
 class ProductListView(View):
     def get(self, request):
-
         products = Product.objects.all()
 
-        is_new = request.GET.get('is_new', None)
+        is_new          = request.GET.get('is_new', None)
         sub_category_id = request.GET.get('sub_category', None)
-        sort = request.GET.get('sort', None)
+        sort            = request.GET.get('sort', None)
 
         if sub_category_id:
             products = products.filter(sub_category_id=sub_category_id)
 
         if is_new:
             products = products.filter(is_new=is_new)
-        
         if sort == 'desc':
             products = products.order_by('-price')
 
@@ -37,7 +35,6 @@ class ProductListView(View):
             'is_soldout'    : product.is_soldout,
             'product_labels': [label.label.name for label in product.productlabel_set.all()],
         } for product in products]
-
         return JsonResponse({'product_list_data': product_list}, status=200)
 
 class ProductDetailView(View):
