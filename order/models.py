@@ -18,7 +18,7 @@ class Order(models.Model):
 class OrderProduct(models.Model):
     total_quantity = models.IntegerField()
     product        = models.ForeignKey('product.Product', on_delete=models.CASCADE)
-    order          = models.ForeignKey('order.Order', on_delete=models.CASCADE)
+    order          = models.OneToOneField('Order', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'orders_products'
