@@ -4,7 +4,7 @@ from user.models    import User
 from product.models import Product
 
 class Order(models.Model):
-    order_number = models.CharField(max_length=100)
+    order_number = models.CharField(max_length=100, null=True)
     created_at   = models.DateTimeField(auto_now_add=True)
     updated_at   = models.DateTimeField(auto_now=True)
     payment      = models.OneToOneField('Payment', on_delete=models.CASCADE, null=True)

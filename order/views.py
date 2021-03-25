@@ -19,23 +19,14 @@ class CartView(View):
             user         = request.user
             quantity     = data['quantity']
 
-            if not Order.objects.filter(user=user, order_status__status=ORDER_STATUS).exists():
-                order=Order.objects.create(
-                    order_number = uuid.uuid4(),
-                    user         = user,
-                    order_status = OrderStatus.objects.get(status=ORDER_STATUS),
-                )
-                OrderProduct.objects.create(
-                    total_quantity = quantity,
-                    product_id     = product_id,    
-                    order_id       = order.id 
-                )
-                return JsonResponse({'message':'SUCCESS_CREATE'}, status=201)
+            order, is_created = Order.objects.get_or_create(
+                user         = user,
+                order_status = OrderStatus.objects.get(status=ORDER_STATUS)   
+            )
 
-            if not Order.objects.filter(user=user, order_status__status=ORDER_STATUS).exists():
-                return JsonResponse({'message':'INVALID_ORDER'}, status=401)
-
-            order = Order.objects.get(user=user, order_status__status=ORDER_STATUS)
+            if is_created:
+                order.order_number = uuid.uuid4()
+                order.save()
 
             if OrderProduct.objects.filter(order=order, product_id=product_id).exists():
                 order_product = OrderProduct.objects.get(order=order, product_id=product_id)
@@ -50,7 +41,7 @@ class CartView(View):
                     order_id       = order.id
                 )
             return JsonResponse({'message':'SUCCESS_CREATE'}, status=201)
-        
+
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status=400) 
 
@@ -60,7 +51,7 @@ class CartView(View):
     @authorization
     def get (self, request):
         try:
-            user         = request.user
+            user = request.user
 
             if not Order.objects.filter(user=user, order_status__status=ORDER_STATUS).exists():
                 return JsonResponse({'message':'INVALID_ORDER'}, status=401)
